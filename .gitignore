@@ -6,4 +6,6 @@ env
 
 # Compiled Python
 */*.pyc
+*/*.pyo
+*.pyo
 
