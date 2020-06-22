@@ -95,7 +95,7 @@ class ProcessVideos:
             tmp_filename = x + ".mp4"
             print("Moving " + tmp_filename + " from " + os.path.join(self._folder, tmp_filename) + " to " + os.path.join(self._folder, x, tmp_filename))
             os.rename(os.path.join(self._folder, tmp_filename), os.path.join(self._folder, x, tmp_filename))
-            copy2(os.path.join(self._folder, "split.sh"), os.path.join(self._folder, x))
+            copy2(os.path.join("./", "split.sh"), os.path.join(self._folder, x))
 
 
 if __name__ == '__main__':
