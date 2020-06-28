@@ -12,7 +12,7 @@ mkdir pieces-120sec
 mkdir pieces-30sec
 
 while [[ $START -lt $FILE_LENGTH ]]; do
-    ffmpeg -i "$FILE" -force_key_frames "expr:gtr(t,n_forced*3)" -ss $START -t $SIZE -c copy pieces-120sec/${START}.mp4
+    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-120sec/${START}.mp4
     let START=START+SIZE
 done
 
@@ -20,6 +20,6 @@ done
 START=0
 SIZE=30
 while [[ $START -lt $FILE_LENGTH ]]; do
-    ffmpeg -i "$FILE" -force_key_frames "expr:gtr(t,n_forced*3)" -ss $START -t $SIZE -c copy pieces-30sec/${START}.mp4
+    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-30sec/${START}.mp4
     let START=START+SIZE
 done
