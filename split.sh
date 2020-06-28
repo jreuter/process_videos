@@ -23,8 +23,8 @@ SIZE=30
 touch fileList.txt
 echo "" > fileList.txt
 while [[ $START -lt $FILE_LENGTH ]]; do
-    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-30sec/${START}.mp4
-    # Split, re-encode with keyframes every 1 second, 30 fps and quality 20.
+    #ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-30sec/${START}.mp4
+    ## Split, re-encode with keyframes every 1 second, 30 fps and quality 20.
     ffmpeg -i "$FILE" -ss $START -t $SIZE -c:v libx264 -crf 20 -r 30 -force_key_frames "expr:gte(t,n_forced*1)" pieces-30sec/${START}.mp4
     echo "file pieces-30sec/${START}.mp4" >> fileList.txt
     let START=START+SIZE
