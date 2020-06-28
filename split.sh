@@ -19,7 +19,17 @@ done
 
 START=0
 SIZE=30
+# If I can get the combine to work with flowblade, this would be helpful.
+touch fileList.txt
+echo "" > fileList.txt
 while [[ $START -lt $FILE_LENGTH ]]; do
     ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-30sec/${START}.mp4
+    # Split, re-encode with keyframes every 1 second, 30 fps and quality 20.
+    ffmpeg -i "$FILE" -ss $START -t $SIZE -c:v libx264 -crf 20 -r 30 -force_key_frames "expr:gte(t,n_forced*1)" pieces-30sec/${START}.mp4
+    echo "file pieces-30sec/${START}.mp4" >> fileList.txt
     let START=START+SIZE
 done
+
+## Just combine the files. Only useful if I can get it to work with flowblade.
+#ffmpeg -f concat -i fileList.txt -c copy combined.mp4
+
