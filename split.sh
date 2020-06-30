@@ -2,6 +2,7 @@
 
 FILE="$(ls *.mp4)"
 echo $FILE
+echo -en "\033]0;${FILE}\a"
 FILE_LENGTH="$(ffmpeg -i "$FILE" 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }')"
 EXPECTED_FPS=30
 
