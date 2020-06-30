@@ -17,13 +17,7 @@ touch failures.txt
 #touch fileList.txt
 #echo "" > fileList.txt
 
-# Split the first 2 minutes so any edits at the beginning don't jump to a strange keyframe.
-while [[ $START -lt $SIZE ]]; do
-    ffmpeg -i "$FILE" -ss $START -t $SSIZE -c:v libx264 -crf 20 -r $EXPECTED_FPS -force_key_frames "expr:gte(t,n_forced*1)" pieces-${SSIZE}sec/${START}.mp4
-    let START=START+SSIZE
-done
-
-# Split the rest of the video, check for flaws, etc.
+# Split the video, check for flaws, etc.
 while [[ $START -lt $FILE_LENGTH ]]; do
     ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-${SIZE}sec/${START}.mp4
     # Check file for fps, if less than 30 (variable), create 30-sec clip.
@@ -38,9 +32,21 @@ while [[ $START -lt $FILE_LENGTH ]]; do
             let SSTART=SSTART+SSIZE
         done
     fi
-#    echo "file pieces-120sec/${START}.mp4" >> fileList.txt
+    #    echo "file pieces-${SIZE}sec/${START}.mp4" >> fileList.txt
     let START=START+SIZE
 done
+
+# If there are failures or if we know we want the first part split into 30sec sections.
+if [ -s failures.txt ] || [ "$1" = "-f" ]; then
+    START=0
+    SIZE=120
+    SSIZE=30
+    # Split the first 2 minutes so any edits at the beginning don't jump to a strange keyframe.
+    while [[ $START -lt $SIZE ]]; do
+        ffmpeg -n -i "$FILE" -ss $START -t $SSIZE -c:v libx264 -crf 20 -r $EXPECTED_FPS -force_key_frames "expr:gte(t,n_forced*1)" pieces-${SSIZE}sec/${START}.mp4
+        let START=START+SSIZE
+    done
+fi
 
 mkdir all-files
 mv -f pieces-${SIZE}sec/* all-files/
