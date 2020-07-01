@@ -14,6 +14,7 @@ Options:
     --version       Show version.
     -q              Quiet the logging to only ERROR level.
     -v              Verbose output (INFO level).
+    -s              Queue up and Split videos.
     --debug         Very Verbose output (DEBUG level).
 """
 import os, sys, array, unittest, random, re
