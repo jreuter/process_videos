@@ -19,7 +19,7 @@ touch failures.txt
 
 # Split the video, check for flaws, etc.
 while [[ $START -lt $FILE_LENGTH ]]; do
-    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy pieces-${SIZE}sec/${START}.mp4
+    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy -loglevel warning -stats pieces-${SIZE}sec/${START}.mp4
     # Check file for fps, if less than 30 (variable), create 30-sec clip.
     FPS="$(ffmpeg -i pieces-${SIZE}sec/${START}.mp4 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p")"
     echo "FPS for video ${START} is ${FPS}."
@@ -28,7 +28,7 @@ while [[ $START -lt $FILE_LENGTH ]]; do
         echo "${START}.mp4" >> failures.txt
         SSTART=${START}
         while [[ $SSTART -lt START+SIZE ]] && [[ $SSTART -lt $FILE_LENGTH  ]]; do
-            ffmpeg -i "$FILE" -ss $SSTART -t $SSIZE -c:v libx264 -crf 20 -r ${EXPECTED_FPS} -force_key_frames "expr:gte(t,n_forced*1)" pieces-${SSIZE}sec/${SSTART}.mp4
+            ffmpeg -i "$FILE" -ss $SSTART -t $SSIZE -c:v libx264 -crf 20 -r ${EXPECTED_FPS} -force_key_frames "expr:gte(t,n_forced*1)" -loglevel warning -stats pieces-${SSIZE}sec/${SSTART}.mp4
             let SSTART=SSTART+SSIZE
         done
     fi
@@ -43,7 +43,7 @@ if [ -s failures.txt ] || [ "$1" = "-f" ]; then
     SSIZE=30
     # Split the first 2 minutes so any edits at the beginning don't jump to a strange keyframe.
     while [[ $START -lt $SIZE ]]; do
-        ffmpeg -n -i "$FILE" -ss $START -t $SSIZE -c:v libx264 -crf 20 -r $EXPECTED_FPS -force_key_frames "expr:gte(t,n_forced*1)" pieces-${SSIZE}sec/${START}.mp4
+        ffmpeg -n -i "$FILE" -ss $START -t $SSIZE -c:v libx264 -crf 20 -r $EXPECTED_FPS -force_key_frames "expr:gte(t,n_forced*1)" -loglevel warning -stats pieces-${SSIZE}sec/${START}.mp4
         let START=START+SSIZE
     done
 fi

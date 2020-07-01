@@ -21,6 +21,7 @@ import os, sys, array, unittest, random, re
 from docopt import docopt
 from shutil import copy2
 import logging
+import subprocess
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout,
                     format='%(asctime)s %(levelname)s %(message)s')
@@ -97,6 +98,14 @@ class ProcessVideos:
             print("Moving " + tmp_filename + " from " + os.path.join(self._folder, tmp_filename) + " to " + os.path.join(self._folder, x, tmp_filename))
             os.rename(os.path.join(self._folder, tmp_filename), os.path.join(self._folder, x, tmp_filename))
             copy2(os.path.join("./", "split.sh"), os.path.join(self._folder, x))
+
+        if self._arguments['-s']:
+            for i, name in enumerate(directories, start=1):
+                directory = os.path.join(self._folder, name)
+                print("\n\nProcessing {} of {}: {}\n\n".format(i, len(directories), name))
+                os.chdir(directory)
+                process = subprocess.Popen("./split.sh", shell=True, stdout=subprocess.PIPE)
+                process.wait()
 
 
 if __name__ == '__main__':
