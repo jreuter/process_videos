@@ -1,4 +1,4 @@
-#!/usr/bin/python -O
+#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
 """
@@ -17,7 +17,7 @@ Options:
     -s              Queue up and Split videos.
     --debug         Very Verbose output (DEBUG level).
 """
-import os, sys, array, unittest, random, re
+import os, sys, re
 from docopt import docopt
 from shutil import copy2
 import logging
@@ -30,9 +30,7 @@ logging.basicConfig(level=logging.DEBUG, stream=sys.stdout,
 class ProcessVideos:
     _arguments = None
     _log_level = 'WARN'
-    _default_size = 1920, 1080
     _folder = ''
-    _thread_list = []
 
     def __init__(self):
         """
@@ -71,7 +69,7 @@ class ProcessVideos:
 
         # Make sure it's not a dot folder (may be removed later).
         if os.path.basename(self._folder).startswith('.'):
-            logging.info('Ignoring dot folders.')
+            logging.error('Ignoring dot folders.')
             exit()
 
         # Get all files in directory.
@@ -79,23 +77,26 @@ class ProcessVideos:
             files.extend(filenames)
             break
         for file in files:
-            print("checking file : " + file)
             tmp = re.findall(mp4_regex, file)
             if len(tmp) > 0:
+                logging.info("Adding file {} to list for processing.".format(file))
                 directories.append(tmp[0])
 
         # Get all files in the directory, but only files.
         # files = [os.path.splitext(f)[0] for f in os.listdir(self._folder)
         #          if os.path.isfile(os.path.join(self._folder, f))]
 
-        print(directories)
+        logging.debug(directories)
 
         for x in directories:
             directory = os.path.join(self._folder, x)
             if not os.path.exists(directory):
+                logging.info("Creating directory {}.".format(directory))
                 os.makedirs(directory)
             tmp_filename = x + ".mp4"
-            print("Moving " + tmp_filename + " from " + os.path.join(self._folder, tmp_filename) + " to " + os.path.join(self._folder, x, tmp_filename))
+            logging.debug("Moving " + tmp_filename + " from " + os.path.join(self._folder, tmp_filename) +
+                          "\n to " + os.path.join(self._folder, x, tmp_filename))
+            print("Processing file {}".format(tmp_filename))
             os.rename(os.path.join(self._folder, tmp_filename), os.path.join(self._folder, x, tmp_filename))
             copy2(os.path.join("./", "split.sh"), os.path.join(self._folder, x))
 
