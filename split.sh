@@ -1,5 +1,10 @@
 #! /bin/bash
 
+if ! command -v ffmpeg &> /dev/null; then
+    echo "ffmpeg could not be found."
+    exit
+fi
+
 FILE="$(ls *.mp4)"
 echo $FILE
 echo -en "\033]0;${FILE}\a"
