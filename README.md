@@ -11,4 +11,10 @@ Install Requirements.
 ```bash
        python -m pip install --user send2trash
 ```
- 
+
+For Python3:
+
+```bash
+        python3 -m pip install --user send2trash
+```
+
