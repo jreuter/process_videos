@@ -15,6 +15,8 @@ Options:
     -q              Quiet the logging to only ERROR level.
     -v              Verbose output (INFO level).
     -p              Permanently remove files/folders.  Default is move to trash.
+    -f              Full cleanup.  This moves the files back to the parent
+                    folder and deletes the folder for each video.
     --debug         Very Verbose output (DEBUG level).
 """
 import os, sys
@@ -74,7 +76,12 @@ class PostProcess:
             break
         print(directories)
         for x in directories:
-            directory = os.path.join(self._folder, x, 'all-files')
+            if self._arguments['-f']:
+                tmp_filename = x + ".mp4"
+                os.rename(os.path.join(self._folder, x, tmp_filename), os.path.join(self._folder, tmp_filename))
+                directory = os.path.join(self._folder, x)
+            else:
+                directory = os.path.join(self._folder, x, 'all-files')
             if os.path.exists(directory):
                 print(("We would remove {}".format(directory)))
                 if self._arguments['-p']:
