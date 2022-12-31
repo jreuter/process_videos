@@ -101,12 +101,21 @@ class ProcessVideos:
             copy2(os.path.join("./", "split.sh"), os.path.join(self._folder, x))
 
         if self._arguments['-s']:
+            bad_files = [];
             for i, name in enumerate(directories, start=1):
                 directory = os.path.join(self._folder, name)
                 print(("\n\nProcessing {} of {}: {}\n\n".format(i, len(directories), name)))
                 os.chdir(directory)
                 process = subprocess.Popen("./split.sh", shell=True, stdout=subprocess.PIPE)
                 process.wait()
+                failure_size = os.path.getsize("./failures.txt")
+                if failure_size > 0:
+                    bad_files.append(name)
+            if len(bad_files) is 0:
+                print("There were not video flaws detected.")
+            else:
+                for file in bad_files:
+                    print(("File {} has flaws.".format(file)))
 
 
 if __name__ == '__main__':
