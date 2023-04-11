@@ -111,7 +111,7 @@ class ProcessVideos:
                 failure_size = os.path.getsize("./failures.txt")
                 if failure_size > 0:
                     bad_files.append(name)
-            if len(bad_files) is 0:
+            if len(bad_files) == 0:
                 print("There were not video flaws detected.")
             else:
                 for file in bad_files:
