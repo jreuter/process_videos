@@ -25,7 +25,7 @@ mkdir pieces-${SIZE}sec
 
 # Split the video, check for flaws, etc.
 while [[ $START -lt $FILE_LENGTH ]]; do
-    ffmpeg -i "$FILE" -ss $START -t $SIZE -c copy -loglevel warning -stats pieces-${SIZE}sec/${START}.mp4
+    ffmpeg -i "$FILE" -ss $START -t $SIZE -c:v libx264 -c:a copy -crf 21 -loglevel warning -stats pieces-${SIZE}sec/${START}.mp4
     # Check file for fps, if less than 30 (variable), create 30-sec clip.
 #    FPS="$(ffmpeg -i pieces-${SIZE}sec/${START}.mp4 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p")"
 #    echo "FPS for video ${START} is ${FPS}."
@@ -54,8 +54,8 @@ done
 #    done
 #fi
 
-mkdir files-clips
-mv -f pieces-${SIZE}sec/* files-clips/
+mkdir file-clips
+mv -f pieces-${SIZE}sec/* file-clips/
 #mv -f pieces-${SSIZE}sec/* all-files/
 
 ## Just combine the files. Only useful if I can get it to work with flowblade.
