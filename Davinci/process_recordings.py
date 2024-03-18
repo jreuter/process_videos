@@ -84,8 +84,9 @@ class ProcessRecordings:
         # TODO: Add fps here as well.
         video_format = f'scale={scale},fps=30000/1001,format=yuv422p'
         probe = ffmpeg.probe(file_path)
-        print(f'Frames is {probe["streams"][0]["nb_frames"]}')
-        print(f'Total duration is {probe["streams"][0]["duration"]}')
+        # TODO: Broken on Camera A footage
+        # print(f'Frames is {probe["streams"][0]["nb_frames"]}')
+        # print(f'Total duration is {probe["streams"][0]["duration"]}')
         # total_duration = probe["streams"][0]["duration"]
         ffmpeg.input(file_path).output(dest_path,
                                        **{'c:v': 'dnxhd'},
