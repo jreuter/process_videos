@@ -90,7 +90,8 @@ class ProcessRecordings:
                                        **{'c:v': 'dnxhd'},
                                        **{'c:a': 'pcm_s16le'},
                                        **{'vf': video_format},
-                                       **{'b:v': '90M'},
+                                       **{'profile:v': 'dnxhr_hq'},
+                                       # **{'b:v': '90M'},
                                        loglevel="quiet").run()
                                        # **{'progress': '-'}).run()
 
