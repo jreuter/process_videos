@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if ! command -v ffmpeg &> /dev/null; then
+    echo "ffmpeg could not be found."
+    exit
+fi
+
+echo "Checking Directory $1"
+
+for i in "$1"/*.MP4; do
+    [ -f "$i" ] || break
+
+    echo "Processing File: $i"
+
+    SCALE=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$i" | tr , :)
+    echo "Scale is $SCALE"
+
+    # MOV files
+    # ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=30000/1001,format=yuv422p" -b:v 90M -c:a pcm_s16le "$i.mxf"
+
+    #MP4 files
+    ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=24000/1001,format=yuv422p" -profile:v dnxhr_hq -c:a pcm_s16le "$i.mxf"
+
+done
+
