@@ -74,21 +74,17 @@ class ProcessRecordings:
     def convert_to_mxf(self, file, ext):
         filename = file + f'.{ext}'
         file_path = os.path.join(self._folder, self._directories['source'], filename)
-        dest_file = file + '.mxf'
-        dest_path = os.path.join(self._folder, self._directories['dest'], dest_file)
-        ffprobe = ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of',
-                   'csv=p=0', file_path]
-        translate = ['tr', ',', ':']
-        ffprobe_proc = subprocess.Popen(ffprobe, stdout=subprocess.PIPE, text=True)
-        translate_proc = subprocess.Popen(translate, stdin=ffprobe_proc.stdout, stdout=subprocess.PIPE, text=True)
-        scale, error = translate_proc.communicate()
-        # Build Video Format based on ffprobe data.
-        # TODO: Add fps here as well.
+
+        # Get FPS and scale from original file.
         probe = ffmpeg.probe(file_path)
         fps = probe["streams"][0]["r_frame_rate"]
-        print(f'FPS is : {fps}')
-        # TODO: Broken on Camera A footage
-        print(f'Probe details: {probe}')
+        num, denom = fps.split('/')
+        frame_rate = round(float(num) / float(denom))
+        scale = str(probe["streams"][0]["width"]) + ":" + str(probe["streams"][0]["height"])
+
+        dest_file = file + '_' + scale + '_' + str(frame_rate) + '.mxf'
+        dest_path = os.path.join(self._folder, self._directories['dest'], dest_file)
+        # Build Video Format based on ffprobe data.
         video_format = f'scale={scale},fps={fps},format=yuv422p'
         ffmpeg.input(file_path).output(dest_path,
                                        **{'c:v': 'dnxhd'},
