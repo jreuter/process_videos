@@ -47,6 +47,6 @@ Install Requirements.
 For Python3 (tqdm is only used to show progress in the DaVinci scripts):
 
 ```bash
-    python3 -m pip install --user send2trash tqdm
+    python3 -m pip install --user send2trash ffmpeg-python
 ```
 

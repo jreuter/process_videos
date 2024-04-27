@@ -217,7 +217,7 @@ class ProcessRecordings:
         for x in mkvs:
             self.convert_to_mxf(x, 'mkv')
 
-        print('Processing MP4s Files from Camera A.')
+        print('Processing MP4s Files.')
         for x in mp4s:
             self.convert_to_mxf(x, 'MP4')
 
