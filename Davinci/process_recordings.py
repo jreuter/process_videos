@@ -23,6 +23,8 @@ Options:
     --debug         Very Verbose output (DEBUG level).
 """
 import os, sys, re
+import fnmatch
+
 from docopt import docopt
 import ffmpeg
 import logging
@@ -82,12 +84,12 @@ class ProcessRecordings:
         scale, error = translate_proc.communicate()
         # Build Video Format based on ffprobe data.
         # TODO: Add fps here as well.
-        video_format = f'scale={scale},fps=30000/1001,format=yuv422p'
         probe = ffmpeg.probe(file_path)
+        fps = probe["streams"][0]["r_frame_rate"]
+        print(f'FPS is : {fps}')
         # TODO: Broken on Camera A footage
-        # print(f'Frames is {probe["streams"][0]["nb_frames"]}')
-        # print(f'Total duration is {probe["streams"][0]["duration"]}')
-        # total_duration = probe["streams"][0]["duration"]
+        print(f'Probe details: {probe}')
+        video_format = f'scale={scale},fps={fps},format=yuv422p'
         ffmpeg.input(file_path).output(dest_path,
                                        **{'c:v': 'dnxhd'},
                                        **{'c:a': 'pcm_s16le'},
