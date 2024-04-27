@@ -128,8 +128,10 @@ class ProcessRecordings:
         files = []
         movs = []
         mkvs = []
+        mp4s = []
         mkv_regex = "(.*).mkv$"
         mov_regex = "(.*).MOV$"
+        mp4_regex = "(.*).MP4$"
 
         logging.info('Directory added: %s', self._arguments['<folder>'])
         self._folder = self._arguments['<folder>']
@@ -162,6 +164,13 @@ class ProcessRecordings:
                 logging.info("Queueing file {} to list for processing.".format(file))
                 mkvs.append(tmp[0])
 
+        print('Searching for MP4 files.')
+        for file in files:
+            tmp = re.findall(mp4_regex, file)
+            if len(tmp) > 0:
+                logging.info("Queueing file {} to list for processing.".format(file))
+                mp4s.append(tmp[0])
+
         # Make directories and move files.
         print('Creating Folder Structure.')
         for value in self._directories.values():
@@ -180,6 +189,9 @@ class ProcessRecordings:
 
         for x in mkvs:
             self.move_to_source(x, 'mkv')
+
+        for x in mp4s:
+            self.move_to_source(x, 'MP4')
 
         # Extact Audio Wav for Quick Edit
         for x in mkvs:
@@ -204,6 +216,10 @@ class ProcessRecordings:
         print('Processing MKV Files from Camera A.')
         for x in mkvs:
             self.convert_to_mxf(x, 'mkv')
+
+        print('Processing MP4s Files from Camera A.')
+        for x in mp4s:
+            self.convert_to_mxf(x, 'MP4')
 
 
 if __name__ == '__main__':
