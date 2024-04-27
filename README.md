@@ -41,12 +41,12 @@ This requires a 3rd party app `send2trash`.
 Install Requirements.
 
 ```bash
-       python -m pip install --user send2trash
+   python -m pip install --user send2trash
 ```
 
-For Python3:
+For Python3 (tqdm is only used to show progress in the DaVinci scripts):
 
 ```bash
-        python3 -m pip install --user send2trash
+    python3 -m pip install --user send2trash tqdm
 ```
 

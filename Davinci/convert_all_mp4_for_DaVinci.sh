@@ -15,13 +15,10 @@ for i in "$1"/*.MP4; do
     SCALE=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$i" | tr , :)
     echo "Scale is $SCALE"
 
-    # MOV files
-    # ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=30000/1001,format=yuv422p" -b:v 90M -c:a pcm_s16le "$i.mxf"
+    # MP4 files 23.97
+#    ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=24000/1001,format=yuv422p" -b:v 90M -c:a pcm_s16le "$i.mxf"
 
-    # MP4 files 23.97 FPS
-    #ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=24000/1001,format=yuv422p" -b:v 90M -c:a pcm_s16le "$i.mxf"
-
-    # MP$ files 29.97 FPS
+    # MP$ Files 29.97
     ffmpeg -i "$i" -c:v dnxhd -vf "scale=$SCALE,fps=30000/1001,format=yuv422p" -b:v 90M -c:a pcm_s16le "$i.mxf"
 
 done
