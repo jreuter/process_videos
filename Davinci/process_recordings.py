@@ -82,18 +82,40 @@ class ProcessRecordings:
         frame_rate = round(float(num) / float(denom))
         scale = str(probe["streams"][0]["width"]) + ":" + str(probe["streams"][0]["height"])
 
+        # Adding the scale to help with mixed content.  However, if we need to re-generate sources from before 4/20/24
+        # for existing DaVinci Resolve projects, we should change this back so all the sources match the originals.
         dest_file = file + '_' + scale + '_' + str(frame_rate) + '.mxf'
         dest_path = os.path.join(self._folder, self._directories['dest'], dest_file)
         # Build Video Format based on ffprobe data.
         video_format = f'scale={scale},fps={fps},format=yuv422p'
-        ffmpeg.input(file_path).output(dest_path,
-                                       **{'c:v': 'dnxhd'},
-                                       **{'c:a': 'pcm_s16le'},
-                                       **{'vf': video_format},
-                                       **{'profile:v': 'dnxhr_hq'},
-                                       # **{'b:v': '90M'},
-                                       loglevel="quiet").run()
-                                       # **{'progress': '-'}).run()
+        if scale == "1920:1080":
+            # This works for 1080 content and produces smaller files.  See details in the comment section below.
+            ffmpeg.input(file_path).output(dest_path,
+                                           **{'c:v': 'dnxhd'},
+                                           **{'c:a': 'pcm_s16le'},
+                                           **{'vf': video_format},
+                                           # **{'profile:v': 'dnxhr_hq'},
+                                           **{'b:v': '90M'},
+                                           loglevel="quiet").run()
+                                            # **{'progress': '-'}).run()
+        else:
+            # This works for all content, and I'd like to use it, but the files are huge and I don't have the extra
+            # space while editing.
+            # Size comparison:  Original MKV from OBS   = 36.9 GB
+            #                   Using this command      = 266.3 GB
+            #                   Using 90M vs dnxhr_hq   = 56.5 GB
+            #
+            #                   Original MOV from T5i   = 4.3 GB
+            #                   Using this command      = 19.7 GB
+            #                   Using 90M vs dnxhr_hq   = 4.2 GB
+            ffmpeg.input(file_path).output(dest_path,
+                                           **{'c:v': 'dnxhd'},
+                                           **{'c:a': 'pcm_s16le'},
+                                           **{'vf': video_format},
+                                           **{'profile:v': 'dnxhr_hq'},
+                                           # **{'b:v': '90M'},
+                                           loglevel="quiet").run()
+                                           # **{'progress': '-'}).run()
 
         ## Beginning of solution I found here: https://github.com/kkroening/ffmpeg-python/blob/master/examples/show_progress.py
         ## This might require too many changes though.
