@@ -84,7 +84,9 @@ class ProcessRecordings:
 
         # Adding the scale to help with mixed content.  However, if we need to re-generate sources from before 4/20/24
         # for existing DaVinci Resolve projects, we should change this back so all the sources match the originals.
-        dest_file = file + '_' + scale + '_' + str(frame_rate) + '.mxf'
+        # Another tweak here.  Sources before 6/1/24 didn't use the `replace` call here.  This was added because some
+        # drive formats (USB External) can't handle the `:` character in the filename.
+        dest_file = file + '_' + scale.replace(':', 'x') + '_' + str(frame_rate) + '.mxf'
         dest_path = os.path.join(self._folder, self._directories['dest'], dest_file)
         # Build Video Format based on ffprobe data.
         video_format = f'scale={scale},fps={fps},format=yuv422p'
