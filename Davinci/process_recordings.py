@@ -153,9 +153,11 @@ class ProcessRecordings:
         movs = []
         mkvs = []
         mp4s = []
+        webms = []
         mkv_regex = "(.*).mkv$"
         mov_regex = "(.*).MOV$"
         mp4_regex = "(.*).MP4$"
+        webm_regex = "(.*).webm$"
 
         logging.info('Directory added: %s', self._arguments['<folder>'])
         self._folder = self._arguments['<folder>']
@@ -195,6 +197,13 @@ class ProcessRecordings:
                 logging.info("Queueing file {} to list for processing.".format(file))
                 mp4s.append(tmp[0])
 
+        print('Searching for webm files.')
+        for file in files:
+            tmp = re.findall(webm_regex, file)
+            if len(tmp) > 0:
+                logging.info("Queueing file {} to list for processing.".format(file))
+                webms.append(tmp[0])
+
         # Make directories and move files.
         print('Creating Folder Structure.')
         for value in self._directories.values():
@@ -216,6 +225,9 @@ class ProcessRecordings:
 
         for x in mp4s:
             self.move_to_source(x, 'MP4')
+
+        for x in webms:
+            self.move_to_source(x, 'webm')
 
         # Extact Audio Wav for Quick Edit
         for x in mkvs:
@@ -244,6 +256,10 @@ class ProcessRecordings:
         print('Processing MP4s Files.')
         for x in mp4s:
             self.convert_to_mxf(x, 'MP4')
+
+        print('Processing webm Files.')
+        for x in webms:
+            self.convert_to_mxf(x, 'webm')
 
 
 if __name__ == '__main__':
