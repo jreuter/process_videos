@@ -7,6 +7,12 @@ fi
 
 echo "Checking Directory $1"
 
+# Enable case-insensitive globbing
+shopt -s nocaseglob
+# Enable nullglob to prevent the loop from running with the literal pattern if no files match
+shopt -s nullglob
+
+#find "$1" -iname \*.MP4 -o -iname \*.mp4 | while read f; do
 for i in "$1"/*.MP4; do
     [ -f "$i" ] || break
 
@@ -24,6 +30,9 @@ for i in "$1"/*.MP4; do
     ffmpeg -i "$i" -acodec pcm_s16le -vcodec copy "$i-pcm.mov"
 
 done
+
+# Optional: Disable nocaseglob to restore default behavior
+shopt -u nocaseglob
 
 
 #ffmpeg -i "FBB13501.mkv" -map 0 -c copy -c:a aac "FBB13501-1080p.MP4"
